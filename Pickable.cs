@@ -23,6 +23,8 @@ public class Pickable : IsHoverable {
 
     [SerializeField] private LightSwitchManager hallLightSwitch;
 
+    public AudioClip pickUpSound = null;
+
     public Transform parent;
 
     private Vector3 origPos;

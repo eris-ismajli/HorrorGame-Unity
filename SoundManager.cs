@@ -11,6 +11,11 @@ public class SoundManager : MonoBehaviour {
 
     [SerializeField] private Transform axe;
 
+    private string PORCELAIN_PICKUP = "PorcelainPickup";
+    private string METAL_PICKUP = "MetalPickup";
+    private string KEY_PICKUP = "KeyPickup";
+
+
     private void Awake() {
         Instance = this;
     }
@@ -29,14 +34,14 @@ public class SoundManager : MonoBehaviour {
         BreakPlank.OnPlankBreakSound += BreakPlank_OnPlankBreakSound;
         BreakPlank.OnPlankHit += BreakPlank_OnPlankHit1;
 
-        
+
         PlayerInventory.Instance.OnEquip += Inventory_OnEquip;
     }
 
     private void Inventory_OnEquip(object sender, System.EventArgs e) {
         PlaySound(audioClipRefsSO.equip, player.position, volume: 0.3f);
     }
-   
+
     private void BreakPlank_OnPlankBreakSound(object sender, System.EventArgs e) {
         PlayRandomSound(audioClipRefsSO.planksBreaking, axe.position, volume: 0.5f);
     }
@@ -75,9 +80,29 @@ public class SoundManager : MonoBehaviour {
         PlaySound(audioClipRefsSO.keyTwist, key.transform.position);
     }
 
+
     private void Pickable_OnPicked(object sender, System.EventArgs e) {
         Pickable objectPicked = sender as Pickable;
-        PlaySound(audioClipRefsSO.pickup, objectPicked.transform.position, volume: .6f);
+        AudioClip defaultPickup = audioClipRefsSO.defaultPickup;
+
+        AudioClip pickupSound;
+
+        if (objectPicked.pickUpSound != null) {
+            pickupSound = objectPicked.pickUpSound;
+        }
+        else {
+            pickupSound = defaultPickup;
+        }
+
+        float volume = 0.45f;
+        if (pickupSound.name == PORCELAIN_PICKUP) {
+            volume = 0.23f;
+        } else if (pickupSound.name == METAL_PICKUP) {
+            volume = 0.1f;
+        } else if (pickupSound.name == KEY_PICKUP) {
+            volume = 1f;
+        }
+        PlaySound(pickupSound, objectPicked.transform.position, volume);
     }
 
     private void Door_OnDoorLocked(object sender, System.EventArgs e) {

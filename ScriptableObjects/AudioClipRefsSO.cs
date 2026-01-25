@@ -3,6 +3,12 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class AudioClipRefsSO : ScriptableObject {
 
+    public static AudioClipRefsSO Instance {get; private set;}
+
+    void Awake() {
+       Instance = this; 
+    }
+
     public AudioClip[] door;
     public AudioClip doorClosed;
     public AudioClip doorClose;
@@ -16,11 +22,17 @@ public class AudioClipRefsSO : ScriptableObject {
 
     public AudioClip[] footsteps;
 
-    public AudioClip pickup;
+    [Header("====== Pickups =======")]
+    public AudioClip defaultPickup;
+    public AudioClip porcelainPickup;
+    public AudioClip paperPickup;
+    public AudioClip glassPickup;
+    public AudioClip keyPickup;
+    public AudioClip canPickup;
+    [Header("======================")]
 
     public AudioClip keyTwist;
 
-    public AudioClip paperPickup;
 
     public AudioClip fridgeOpen;
 
