@@ -21,10 +21,9 @@ public class AllLightsOffAction : MonoBehaviour {
 
     private IEnumerator ToggleCircuitsWithDelay() {
         foreach (CircuitBreakerToggle circuit in circuits) {
-            if (circuit == kitchenCircuit) {
-                Debug.Log("Kitchen Circuit");
-                continue;
-            }
+            
+            if (circuit == kitchenCircuit) continue;
+
             if (circuit.IsOn()) {
                 circuit.ToggleCircuit();
 
@@ -33,7 +32,7 @@ public class AllLightsOffAction : MonoBehaviour {
             }
         }
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(.5f);
 
         if (kitchenCircuit.IsOn()) {
             kitchenCircuit.ToggleCircuit();

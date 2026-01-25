@@ -7,8 +7,6 @@ public class SafeCodeManager : MonoBehaviour {
 
     public static SafeCodeManager Instance { get; private set; }
 
-    public static event EventHandler OnPasswordFound;
-
     [SerializeField] private CameraFocusController safeCameraController;
     [SerializeField] private GameObject safeCodeUI;
     [SerializeField] private TextMeshProUGUI codeInstruction;
@@ -88,6 +86,7 @@ public class SafeCodeManager : MonoBehaviour {
                 UpdateTip(typing: true);
 
                 if (playerCodeInput.Length == codeMaxCharacters) {
+                    // The player entered the correct password
                     if (playerCodeInput == SAFE_CODE) {
                         passwordFound = true;
                         safeCodeUI.SetActive(false);
@@ -138,11 +137,11 @@ public class SafeCodeManager : MonoBehaviour {
     }
 
 
+    // This function runs after the player enters the correct password
     private IEnumerator WaitBeforeZoomingOut() {
         yield return new WaitForSeconds(3f);
         safeCameraController.ZoomOutOfSafe();
-        OnPasswordFound?.Invoke(this, EventArgs.Empty);
-        Destroy(gameObject);
+        // Destroy(gameObject);
     }
 
     private void SafeCameraController_OnCameraTransition(object sender, CameraFocusController.OnCameraTransitionEventArgs e) {

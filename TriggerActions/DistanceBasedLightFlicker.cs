@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
 public class DistanceBasedLightFlicker : MonoBehaviour {
+
+    public static DistanceBasedLightFlicker Instance {get; private set;}
+
     [SerializeField] private LightManager hallLight;
     [SerializeField] private LightSwitchManager hallLightSwitch;
     [SerializeField] private Transform player;
@@ -22,13 +25,19 @@ public class DistanceBasedLightFlicker : MonoBehaviour {
 
     private bool canFlicker = true;
 
+    public bool isGirlVisible = false;
+
+    void Awake() {
+       Instance = this; 
+    }
+
     void Start() {
         smoothD = startFlickerDistance; // init “far”
         timer = 0f;
     }
 
     void Update() {
-        if (!canFlicker) return;
+        if (!canFlicker || isGirlVisible) return;
         // 1) Measure (optionally smooth a bit to prevent tiny jitter)
         float rawD = Vector3.Distance(hallLightSwitch.transform.position, player.position);
         smoothD = (distanceSmooth > 0f)

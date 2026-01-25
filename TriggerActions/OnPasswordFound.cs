@@ -7,6 +7,7 @@ public class OnPasswordFound : MonoBehaviour {
     //[SerializeField] private Door storageDoor;
     //[SerializeField] private LightManager storageLight;
     [SerializeField] private GameObject distanceBasedLightFlicker;
+    [SerializeField] private GameObject safeCodeManager;
 
     [SerializeField] private Pickable[] pickables;
 
@@ -29,6 +30,15 @@ public class OnPasswordFound : MonoBehaviour {
     private void CameraFocusController_OnZoomOutAfterOpening(object sender, EventArgs e) {
         PlayerPickupController.Instance.TryPick(pickables[currentPickable]);
         distanceBasedLightFlicker.SetActive(true);
+
+        // If the girl is visible then let DistanceBasedLightFlicker know.
+        // That way it doesnt toggle the hall light while the girl is visible.
+        if (SafeCodeManager.Instance != null && SafeCodeManager.Instance.canStareAtPlayer) {
+            if (DistanceBasedLightFlicker.Instance != null) {
+                DistanceBasedLightFlicker.Instance.isGirlVisible = true;
+                Destroy(safeCodeManager);
+            }
+        }
     }
 
     private IEnumerator WaitBeforeNextPick() {
