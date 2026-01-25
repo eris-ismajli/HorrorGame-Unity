@@ -55,7 +55,6 @@ public class Door : IsHoverable {
     }
 
     private void PadlockKeyAnim_OnLockerKeyPullout(object sender, EventArgs e) {
-        Debug.Log("FUCK YOU");
         padlockAnim.SetTrigger("OpenPadlock");
         Destroy(animatedPadlockKey);
     }
@@ -159,9 +158,7 @@ public class Door : IsHoverable {
 
     // -- These two methods play the sound effect of the door hinge meeting or leaving the frame
     public void TriggerDoorCloseSound() {
-        Debug.Log("ABOUT TO PLAY CLOSE SOUND");
         if (!doorToggled || isFullySilentDoor) return;
-        Debug.Log("DOOR TOGGLED WHEN PLAYING SOUND " + doorToggled);
         SoundManager.Instance.PlayDoorCloseSound(transform.position, .15f);
     }
 
@@ -176,7 +173,6 @@ public class Door : IsHoverable {
         if (!canDeactivateStairwell) return;
         StairWell.SetActive(false);
         StairWellFog.SetActive(false);
-        Debug.Log("disabled stairwell");
         Destroy(EntranceDoorTrigger);
     }
 
@@ -211,7 +207,6 @@ public class Door : IsHoverable {
 
         doorToggled = false;
 
-        Debug.Log("DOOR TOGGLED AFTER FIRING FUNCTION " + doorToggled);
         // if (animator) {
         //     animator.ResetTrigger("DoorOpen");
         //     animator.ResetTrigger("DoorClose");

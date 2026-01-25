@@ -36,19 +36,16 @@ public class GameStateManager : MonoBehaviour {
 
         switch (currentGameState) {
             case CurrentGameState.Beginning:
-                Debug.Log("beginning");
                 stairwellFog.SetActive(true);
                 mainFog.SetActive(false);
                 break;
 
             case CurrentGameState.Middle:
-                Debug.Log("middle");
                 stairwellFog.SetActive(false);
                 mainFog.SetActive(true);
                 break;
 
             case CurrentGameState.Ending:
-                Debug.Log("ending");
                 stairwellFog.SetActive(true);
                 entranceDoor.UnlockFromTriggerKeepClosed();
                 stairWell.SetActive(true);
