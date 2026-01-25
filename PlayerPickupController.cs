@@ -115,12 +115,16 @@ public class PlayerPickupController : MonoBehaviour {
     }
 
     private void HandleRotation() {
-        float horiz = Input.GetAxis("Mouse X") * rotationSpeed;
-        inspectPivot.Rotate(Vector3.up, horiz, Space.World);
+        float yaw = Input.GetAxis("Mouse X") * rotationSpeed;
+        float pitch = Input.GetAxis("Mouse Y") * rotationSpeed;
 
-        float vert = Input.GetAxis("Mouse Y") * rotationSpeed;
-        inspectPivot.Rotate(Vector3.right, vert, Space.Self);
+        Transform camT = cam.transform;
+
+        // Rotate around camera-relative axes
+        inspectPivot.Rotate(camT.up, yaw, Space.World);
+        inspectPivot.Rotate(camT.right, -pitch, Space.World);
     }
+
 
     private void EnterInspectMode() {
         isInspecting = true;
@@ -147,7 +151,7 @@ public class PlayerPickupController : MonoBehaviour {
     private void ToggleInspectLighting(bool enable) {
         inspectLight.enabled = enable;
 
-        // if (!PlayerInventory.Instance.HasEquipableObject(flashlightSO)) return;
+        if (!PlayerInventory.Instance.HasEquipableObject(flashlightSO)) return;
 
         Vector3 inspectingFlashlightOffset = new Vector3(0.2f, 0f, -0.6f);
         Vector3 targetFlashlightOffset = enable ? inspectingFlashlightOffset : defaultFlashlightOffset;

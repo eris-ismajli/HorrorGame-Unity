@@ -9,7 +9,7 @@ public class FlashlightStatus : MonoBehaviour {
     [SerializeField] Light flashLight;
 
     private bool isFlashLightOn = false;
-    private bool canBeToggled = true;
+    private bool canBeToggled = false;
 
     private void Awake() {
         Instance = this;

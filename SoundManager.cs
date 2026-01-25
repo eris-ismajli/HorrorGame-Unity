@@ -28,8 +28,15 @@ public class SoundManager : MonoBehaviour {
         DrawerAnimator.OnDrawerChanged += DrawerAnimator_OnDrawerChanged;
         BreakPlank.OnPlankBreakSound += BreakPlank_OnPlankBreakSound;
         BreakPlank.OnPlankHit += BreakPlank_OnPlankHit1;
+
+        
+        PlayerInventory.Instance.OnEquip += Inventory_OnEquip;
     }
 
+    private void Inventory_OnEquip(object sender, System.EventArgs e) {
+        PlaySound(audioClipRefsSO.equip, player.position, volume: 0.3f);
+    }
+   
     private void BreakPlank_OnPlankBreakSound(object sender, System.EventArgs e) {
         PlayRandomSound(audioClipRefsSO.planksBreaking, axe.position, volume: 0.5f);
     }

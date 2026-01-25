@@ -77,7 +77,6 @@ public class FlashlightLook : MonoBehaviour {
         if (yawReference != null) {
             float camYaw = yawReference.rotation.eulerAngles.y;
             yaw = Mathf.LerpAngle(yaw, camYaw, Time.deltaTime * springBackSpeed);
-            Debug.Log(yaw);
         }
 
         if (pitchReference != null) {

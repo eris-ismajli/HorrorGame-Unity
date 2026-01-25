@@ -6,6 +6,7 @@ public class PlateFallAction : MonoBehaviour {
 
     [SerializeField] private GameObject[] platePieces;
     [SerializeField] private GameObject plate;
+    [SerializeField] private GameObject plateParent;
 
 
     private Animator plateAnim;
@@ -14,11 +15,20 @@ public class PlateFallAction : MonoBehaviour {
 
     private bool released;
 
+
     void Awake() {
         Instance = this;
 
         plateAnim = plate.GetComponent<Animator>();
         plateMeshRenderer = plate.GetComponent<MeshRenderer>();
+
+        plateAnim.enabled = false;
+
+        // Now hierarchy math is stable
+        plate.transform.SetParent(null, true);
+
+        Destroy(plateParent);
+
 
         // Animate while kinematic
 
@@ -44,6 +54,7 @@ public class PlateFallAction : MonoBehaviour {
 
 
         foreach (GameObject piece in platePieces) {
+            piece.SetActive(true);
             pieceRb = piece.GetComponent<Rigidbody>();
             pieceRb.isKinematic = false;
             pieceRb.useGravity = true;
@@ -65,6 +76,8 @@ public class PlateFallAction : MonoBehaviour {
 
         if (other.CompareTag("Player")) {
             triggered = true;
+            plateAnim.enabled = true;
+
             TriggerPlateFall();
         }
     }

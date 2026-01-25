@@ -53,4 +53,6 @@ public class AudioClipRefsSO : ScriptableObject {
     public AudioClip mugSlide2;
 
     public AudioClip crawl;
+
+    public AudioClip equip;
 }
