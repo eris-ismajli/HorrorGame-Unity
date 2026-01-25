@@ -49,6 +49,8 @@ public class FlashlightLook : MonoBehaviour {
 
     private void LateUpdate() {
 
+        if (!FlashlightStatus.Instance.IsFlashlighOn()) return;
+
         if (heightReference != null) {
             Vector3 targetPos = heightReference.TransformPoint(localHandOffset);
             transform.position = Vector3.Lerp(transform.position, targetPos, positionFollowSpeed * Time.deltaTime);
@@ -71,9 +73,11 @@ public class FlashlightLook : MonoBehaviour {
         yaw += mouseDelta.x * flashlightSensitivity;
         pitch -= mouseDelta.y * flashlightSensitivity;
 
+        // recenter flashlight
         if (yawReference != null) {
             float camYaw = yawReference.rotation.eulerAngles.y;
             yaw = Mathf.LerpAngle(yaw, camYaw, Time.deltaTime * springBackSpeed);
+            Debug.Log(yaw);
         }
 
         if (pitchReference != null) {
@@ -82,6 +86,7 @@ public class FlashlightLook : MonoBehaviour {
             camPitch = Mathf.Clamp(camPitch, -pitchClamp, pitchClamp);
             pitch = Mathf.Lerp(pitch, camPitch, Time.deltaTime * springBackSpeed);
         }
+        //---
 
         pitch = Mathf.Clamp(pitch, -pitchClamp, pitchClamp);
 
@@ -101,5 +106,30 @@ public class FlashlightLook : MonoBehaviour {
     public void EnableFlashlightRotation(bool enable) {
         flashlightCanRotate = enable;
     }
+
+    public void SnapFlashlightToCenter() {
+        if (yawReference != null) {
+            yaw = yawReference.rotation.eulerAngles.y;
+        }
+
+        if (pitchReference != null) {
+            float camPitch = pitchReference.rotation.eulerAngles.x;
+            if (camPitch > 180f) camPitch -= 360f;
+            pitch = Mathf.Clamp(camPitch, -pitchClamp, pitchClamp);
+        }
+
+        // Apply rotation immediately
+        Vector3 targetOffset = rotationOffset;
+        if (useCrouchRotationOffset && FirstPersonController.Instance != null && FirstPersonController.Instance.IsCrouching) {
+            targetOffset = rotationOffsetCrouched;
+        }
+
+        currentRotationOffset = targetOffset;
+
+        Quaternion baseRot = Quaternion.Euler(pitch, yaw, 0f);
+        Quaternion tweak = Quaternion.Euler(currentRotationOffset);
+        transform.rotation = baseRot * tweak;
+    }
+
 
 }

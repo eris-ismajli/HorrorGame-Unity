@@ -145,18 +145,18 @@ public class PlayerPickupController : MonoBehaviour {
     }
 
     private void ToggleInspectLighting(bool enable) {
-        if (!PlayerInventory.Instance.HasEquipableObject(flashlightSO)) {
-            inspectLight.enabled = enable;
-        }
-        else {
-            inspectLight.enabled = false;
-            Vector3 inspectingFlashlightOffset = new Vector3(0.2f, 0f, -0.6f);
-            Vector3 targetFlashlightOffset = enable ? inspectingFlashlightOffset : defaultFlashlightOffset;
+        inspectLight.enabled = enable;
 
-            FlashlightLook.Instance.localHandOffset = targetFlashlightOffset;
-            flashlightSpotlight.EnableShadows(!enable);
-            FlashlightLook.Instance.EnableFlashlightRotation(!enable);
-        }
+        // if (!PlayerInventory.Instance.HasEquipableObject(flashlightSO)) return;
+
+        Vector3 inspectingFlashlightOffset = new Vector3(0.2f, 0f, -0.6f);
+        Vector3 targetFlashlightOffset = enable ? inspectingFlashlightOffset : defaultFlashlightOffset;
+
+        FlashlightLook.Instance.localHandOffset = targetFlashlightOffset;
+        flashlightSpotlight.EnableShadows(!enable);
+        FlashlightLook.Instance.SnapFlashlightToCenter();
+        FlashlightLook.Instance.EnableFlashlightRotation(!enable);
+
     }
 
     // --- Helpers ---
