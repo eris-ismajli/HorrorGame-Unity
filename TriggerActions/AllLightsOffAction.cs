@@ -1,7 +1,11 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class AllLightsOffAction : MonoBehaviour {
+
+    public static event EventHandler OnAllLightsOff;
 
     [SerializeField] private CircuitBreakerToggle[] circuits;
     [SerializeField] private CircuitBreakerToggle kitchenCircuit;
@@ -38,6 +42,7 @@ public class AllLightsOffAction : MonoBehaviour {
             kitchenCircuit.ToggleCircuit();
         }
 
+        OnAllLightsOff?.Invoke(this, EventArgs.Empty);
         Destroy(gameObject);
     }
 }

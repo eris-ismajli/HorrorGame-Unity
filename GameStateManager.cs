@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour {
@@ -7,6 +8,8 @@ public class GameStateManager : MonoBehaviour {
     [SerializeField] private GameObject stairwellFog;
     [SerializeField] private GameObject stairWell;
     [SerializeField] private Door entranceDoor;
+
+    [SerializeField] private AudioSource horrorAtmosphere;
 
     public enum CurrentGameState {
         Beginning,
@@ -26,6 +29,11 @@ public class GameStateManager : MonoBehaviour {
 
     private void Start() {
         SetGameState(CurrentGameState.Beginning, force: true);
+        AllLightsOffAction.OnAllLightsOff += LightsOff_OnAllLightsOff;
+    }
+
+    private void LightsOff_OnAllLightsOff(object sender, System.EventArgs e) {
+        StartCoroutine(PrepareAndPlayAmbience());
     }
 
     public void SetGameState(CurrentGameState newState, bool force = false) {
@@ -52,6 +60,23 @@ public class GameStateManager : MonoBehaviour {
                 // mainFog.SetActive(false);
                 break;
         }
+    }
+
+    private IEnumerator PrepareAndPlayAmbience() {
+        var clip = horrorAtmosphere.clip;
+        if (clip == null) yield break;
+
+        // Kick off async load (if not already loaded)
+        if (!clip.preloadAudioData && clip.loadState != AudioDataLoadState.Loaded) {
+            clip.LoadAudioData();
+            while (clip.loadState == AudioDataLoadState.Loading) {
+                yield return null; // wait a few frames without blocking
+            }
+        }
+
+        // Schedule start slightly in the future to avoid sync hitches
+        double startTime = AudioSettings.dspTime + 0.05;
+        horrorAtmosphere.PlayScheduled(startTime);
     }
 
 }

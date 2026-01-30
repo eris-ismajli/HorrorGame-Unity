@@ -11,9 +11,9 @@ public class SoundManager : MonoBehaviour {
 
     [SerializeField] private Transform axe;
 
-    private string PORCELAIN_PICKUP = "PorcelainPickup";
-    private string METAL_PICKUP = "MetalPickup";
-    private string KEY_PICKUP = "KeyPickup";
+    private readonly string PORCELAIN_PICKUP = "PorcelainPickup";
+    private readonly string METAL_PICKUP = "MetalPickup";
+    private readonly string KEY_PICKUP = "KeyPickup";
 
 
     private void Awake() {
@@ -34,8 +34,13 @@ public class SoundManager : MonoBehaviour {
         BreakPlank.OnPlankBreakSound += BreakPlank_OnPlankBreakSound;
         BreakPlank.OnPlankHit += BreakPlank_OnPlankHit1;
 
-
         PlayerInventory.Instance.OnEquip += Inventory_OnEquip;
+
+        PlateFallAction.onPlateStartFall += Plate_OnPLateStartFall;
+    }
+
+    private void Plate_OnPLateStartFall(object sender, System.EventArgs e) {
+        PlaySound(audioClipRefsSO.risingViolin, player.position, volume: 0.5f);
     }
 
     private void Inventory_OnEquip(object sender, System.EventArgs e) {

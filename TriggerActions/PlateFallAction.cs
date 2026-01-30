@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlateFallAction : MonoBehaviour {
 
     public static PlateFallAction Instance { get; private set; }
+
+    public static event EventHandler onPlateStartFall;
 
     [SerializeField] private GameObject[] platePieces;
     [SerializeField] private GameObject plate;
@@ -77,6 +80,8 @@ public class PlateFallAction : MonoBehaviour {
         if (other.CompareTag("Player")) {
             triggered = true;
             plateAnim.enabled = true;
+
+            onPlateStartFall?.Invoke(this, EventArgs.Empty);
 
             TriggerPlateFall();
         }

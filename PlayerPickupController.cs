@@ -20,7 +20,7 @@ public class PlayerPickupController : MonoBehaviour {
     [SerializeField] private Light inspectLight;
     [SerializeField] private Transform inspectPivot;         // should be parented to the camera
     [SerializeField] private float baseInspectZ = 0.45f;     // where tiny items sit
-    [SerializeField] private float sizeToDistance = 0.35f;   // how strongly size pushes it away
+    [SerializeField] private float sizeToDistance = 0.4f;   // how strongly size pushes it away
     [SerializeField] private float minInspectZ = 0.25f;      // clamp
     [SerializeField] private float maxInspectZ = 1.2f;       // clamp
     [SerializeField] private float inspectLerp = 12f;        // smoothing speed
@@ -30,13 +30,15 @@ public class PlayerPickupController : MonoBehaviour {
     [SerializeField] private float rotationSpeed = 1f;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Volume postProcessing;
+    [SerializeField] private Volume dofPostProcessing;
     [SerializeField] private LayerMask picakbleLayerMask;
 
     [SerializeField] private EquipableObjectSO flashlightSO;
     [SerializeField] private HDAdditionalLightData flashlightSpotlight;
     private Vector3 defaultFlashlightOffset;
 
-    private DepthOfField dof;
+    private DepthOfField inspectDOF;
+    private DepthOfField defaultDOF;
     private Pickable currentPick;
 
     public bool isInspecting = false;
@@ -48,10 +50,17 @@ public class PlayerPickupController : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        var profile = postProcessing.profile;
-        if (!profile.TryGet<DepthOfField>(out dof)) {
-            dof = profile.Add<DepthOfField>(true);
+
+        var defaultProfileVolume = postProcessing.profile;
+        var dofProfileVolume = dofPostProcessing.profile;
+
+        if (!defaultProfileVolume.TryGet<DepthOfField>(out defaultDOF)) {
+            defaultDOF = defaultProfileVolume.Add<DepthOfField>(true);
         }
+        else if (!dofProfileVolume.TryGet<DepthOfField>(out inspectDOF)) {
+            inspectDOF = dofProfileVolume.Add<DepthOfField>(true);
+        }
+
         targetInspectZ = inspectPivot.localPosition.z;
         if (!cam) cam = Camera.main;
     }
@@ -121,34 +130,37 @@ public class PlayerPickupController : MonoBehaviour {
         Transform camT = cam.transform;
 
         // Rotate around camera-relative axes
-        inspectPivot.Rotate(camT.up, yaw, Space.World);
+        inspectPivot.Rotate(camT.up, -yaw, Space.World);
         inspectPivot.Rotate(camT.right, -pitch, Space.World);
     }
 
 
     private void EnterInspectMode() {
         isInspecting = true;
-        dof.active = true;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = false;
         FirstPersonController.Instance.EnableCameraMovement(false);
         FirstPersonController.Instance.EnablePlayerMovement(false);
-        ToggleInspectLighting(true);
+        AdjustFlashlight(true);
+
+        inspectDOF.active = false;
+        defaultDOF.active = true;
     }
 
     private void ExitInspectMode() {
         isInspecting = false;
-        dof.active = false;
         Cursor.lockState = CursorLockMode.Locked;
         FirstPersonController.Instance.EnableCameraMovement(true);
         if (!HidingAnimator.isHiding) {
             FirstPersonController.Instance.EnablePlayerMovement(true);
         }
-        ToggleInspectLighting(false);
+        AdjustFlashlight(false);
 
+        defaultDOF.active = false;
+        inspectDOF.active = true;
     }
 
-    private void ToggleInspectLighting(bool enable) {
+    private void AdjustFlashlight(bool enable) {
         inspectLight.enabled = enable;
 
         if (!PlayerInventory.Instance.HasEquipableObject(flashlightSO)) return;

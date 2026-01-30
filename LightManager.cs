@@ -15,6 +15,8 @@ public class LightManager : LightFlicker {
     [SerializeField] private LightSwitchManager correspondingLightSwitch;
     [SerializeField] private bool doesFlicker = false;
 
+    [SerializeField] private GameObject cylinder;
+
     [Range(0f, 1f)]
     [SerializeField] private float dimFactor = 0.35f;
 
@@ -57,6 +59,10 @@ public class LightManager : LightFlicker {
     public void BreakLight() {
         isBroken = true;
         ApplyState(false);
+        if (cylinder != null) {
+            cylinder.transform.SetParent(null, true);
+            Destroy(gameObject);
+        }
     }
 
     public void ToggleLightFromCircuit(bool isLightOn) {
