@@ -27,17 +27,16 @@ public class SoundManager : MonoBehaviour {
         Door.OnDoorLocked += Door_OnDoorLocked;
         Pickable.OnPicked += Pickable_OnPicked;
         KeyAnimator.OnKeyTwist += KeyAnimator_OnKeyTwist;
-
         Door.OnFridgeOpen += Door_OnFridgeOpen;
         CircuitBreakerToggle.OnCircuitToggle += CircuitBreakerToggle_OnCircuitToggle;
         DrawerAnimator.OnDrawerChanged += DrawerAnimator_OnDrawerChanged;
         BreakPlank.OnPlankBreakSound += BreakPlank_OnPlankBreakSound;
         BreakPlank.OnPlankHit += BreakPlank_OnPlankHit1;
-
         PlayerInventory.Instance.OnEquip += Inventory_OnEquip;
-
         PlateFallAction.onPlateStartFall += Plate_OnPLateStartFall;
     }
+
+
 
     private void Plate_OnPLateStartFall(object sender, System.EventArgs e) {
         PlaySound(audioClipRefsSO.risingViolin, player.position, volume: 0.5f);
@@ -102,9 +101,11 @@ public class SoundManager : MonoBehaviour {
         float volume = 0.45f;
         if (pickupSound.name == PORCELAIN_PICKUP) {
             volume = 0.23f;
-        } else if (pickupSound.name == METAL_PICKUP) {
+        }
+        else if (pickupSound.name == METAL_PICKUP) {
             volume = 0.1f;
-        } else if (pickupSound.name == KEY_PICKUP) {
+        }
+        else if (pickupSound.name == KEY_PICKUP) {
             volume = 1f;
         }
         PlaySound(pickupSound, objectPicked.transform.position, volume);

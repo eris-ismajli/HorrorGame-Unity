@@ -18,10 +18,10 @@ public class Pickable : IsHoverable {
     [SerializeField] private string objectInfoText;
     [SerializeField] private bool isEquipable;
 
-    [SerializeField] private GameObject whisperBehindTrigger;
     [SerializeField] private GameObject crawlTrigger;
 
     [SerializeField] private LightSwitchManager hallLightSwitch;
+    [SerializeField] private LightSwitchManager kitchenLightSwitch;
 
     public AudioClip pickUpSound = null;
 
@@ -94,12 +94,24 @@ public class Pickable : IsHoverable {
             foreach (var col in GetComponentsInChildren<Collider>()) {
                 col.enabled = false;
             }
+
+            StartCoroutine(WaitBeforeKitchenHallLightsOff());
         }
     }
 
     private IEnumerator PickupKeyWhenReady() {
         yield return new WaitUntil(() => !PlayerPickupController.Instance.IsBusy);
         PlayerPickupController.Instance.TryPick(padlockKey);
+    }
+
+    private IEnumerator WaitBeforeKitchenHallLightsOff() {
+        yield return new WaitForSeconds(0.7f);
+        if (equipableObject.objectName == "Storage Key") {
+            if (hallLightSwitch.IsSwitchOn() && kitchenLightSwitch.IsSwitchOn()) {
+                hallLightSwitch.ToggleLightSwitch(silentSwitch: true);
+                kitchenLightSwitch.ToggleLightSwitch(silentSwitch: true);
+            }
+        }
     }
 
     public void Take() {
@@ -140,9 +152,6 @@ public class Pickable : IsHoverable {
         PlayerInventory.Instance.Equip(equipableObject);
 
         if (equipableObject.objectName == "Storage Key") {
-            if (whisperBehindTrigger != null) {
-                whisperBehindTrigger.SetActive(true);
-            }
             if (isDrawerKey && drawerCollider != null) {
                 drawerCollider.enabled = true;
                 drawer.drawerHasObject = false;

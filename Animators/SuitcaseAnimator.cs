@@ -101,7 +101,6 @@ public class SuitcaseAnimator : IsHoverable {
 
         if (!hasBeenDropped) {
             // Enable the plate fall trigger after the player drops the suitcase
-            plateFallTrigger.SetActive(true);
             suitcaseAnim.SetTrigger("DropSuitcase");
             targetInfo = hasCrowbar ? "Open Suitcase" : "The suitcase is locked. Find something to open it with.";
         }
@@ -125,6 +124,7 @@ public class SuitcaseAnimator : IsHoverable {
 
             if (progress == progressMax) {
                 allLightsOffTrigger.SetActive(true);
+                plateFallTrigger.SetActive(true);
 
                 suitcaseOpened = true;
                 PlayerInventory.Instance.Unequip(crowbar);

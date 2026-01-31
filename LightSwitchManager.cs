@@ -22,12 +22,14 @@ public class LightSwitchManager : IsHoverable {
         ToggleLightSwitch();
     }
 
-    public void ToggleLightSwitch() {
+    public void ToggleLightSwitch(bool silentSwitch = false) {
         isLightOn = !isLightOn;
 
-        OnLightSwitchChanged?.Invoke(this, new OnLightSwitchChangedEventArgs {
-            isOn = isLightOn
-        });
+        if (!silentSwitch) {
+            OnLightSwitchChanged?.Invoke(this, new OnLightSwitchChangedEventArgs {
+                isOn = isLightOn
+            });
+        }
 
         if (lightSwitch != null) {
             lightSwitch.transform.rotation = isLightOn ? switchOn.rotation : switchOff.rotation;
@@ -39,7 +41,6 @@ public class LightSwitchManager : IsHoverable {
                 lightBulb.StartFlicker();
             }
         }
-
     }
 
     public bool IsSwitchOn() {

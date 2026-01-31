@@ -11,12 +11,17 @@ public class StopHallFlicker : MonoBehaviour {
         if (triggered) return;
         if (!other.CompareTag("Player")) return;
         triggered = true;
+
+        SoundManager.Instance.PlayWhisperTrailSound(Camera.main.transform.position, 1f);
+        StormVolumeManager.Instance.FadeOutCompletely();
+
         StartCoroutine(GirlVanish());
     }
 
     private IEnumerator GirlVanish() {
         if (girlAnimationFunctions != null) {
             girlAnimationFunctions.StopFlicker();
+
 
             if (PlayerInventory.Instance.HasEquipableObject(flashlightEquipableSO)) {
                 if (FlashlightStatus.Instance.IsFlashlighOn()) {
@@ -33,7 +38,7 @@ public class StopHallFlicker : MonoBehaviour {
             yield return null;
 
             girlAnimationFunctions.TurnLightsBackOn();
-            
+
             if (PlayerInventory.Instance.HasEquipableObject(flashlightEquipableSO)) {
                 if (!FlashlightStatus.Instance.IsFlashlighOn()) {
                     FlashlightStatus.Instance.ToggleFlashlight();
