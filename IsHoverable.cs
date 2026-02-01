@@ -6,6 +6,8 @@ public abstract class IsHoverable : MonoBehaviour {
     [SerializeField] private float maxInteractionDistance = 1f;
     [SerializeField] protected string objectHoverInfo;
 
+    public bool isInteractable { get; protected set; } = true;
+
     // Expose so the raycaster can check range
     public float MaxInteractionDistance => maxInteractionDistance;
 

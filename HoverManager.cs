@@ -3,8 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class HoverManager : MonoBehaviour
-{
+public class HoverManager : MonoBehaviour {
     [Header("Raycast")]
     [SerializeField] private Camera cam;
 
@@ -29,39 +28,48 @@ public class HoverManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debugDrawRay = false;
 
+    // For TV specific hover management
+    [SerializeField] private EquipableObjectSO tvRemoteEquipableSO;
+
     private IsHoverable currentHover;
 
     // For a locked FPS crosshair: we raycast from the screen center every frame.
     private Vector3 ScreenCenter => new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
 
-    private void Awake()
-    {
+    private void Awake() {
         if (!cam) cam = Camera.main;
 
         if (hoverInfoUI) hoverInfoUI.SetActive(false);
         if (reticle) reticle.rectTransform.sizeDelta = originalSize;
     }
 
-    private void Start()
-    {
+    private void Start() {
         if (FeedbackUIManager.Instance != null)
             FeedbackUIManager.Instance.OnHoverReactivate += Feedback_OnHoverReactivate;
+
+        Pickable.OnTvRemoteEquipped += TVremote_OnEquipped;
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (FeedbackUIManager.Instance != null)
             FeedbackUIManager.Instance.OnHoverReactivate -= Feedback_OnHoverReactivate;
     }
 
-    private void Feedback_OnHoverReactivate(object sender, EventArgs e)
-    {
-        if (currentHover != null)
-            OnHoverEnter(currentHover);
+    private void Feedback_OnHoverReactivate(object sender, EventArgs e) {
+        RefreshHover();
     }
 
-    private void Update()
-    {
+    private void TVremote_OnEquipped(object sender, EventArgs e) {
+        RefreshHover();
+    }
+
+    private void RefreshHover() {
+        if (currentHover != null) {
+            OnHoverEnter(currentHover);
+        }
+    }
+
+    private void Update() {
         if (!cam) return;
 
         // Accurate for HDRP + DLSS/Dynamic Resolution: use Unity's ScreenPointToRay.
@@ -76,8 +84,7 @@ public class HoverManager : MonoBehaviour
         // if (newHover == null)
         //     TryTriggerSecondary(ray);
 
-        if (newHover != currentHover)
-        {
+        if (newHover != currentHover) {
             if (currentHover != null) OnHoverExit();
             currentHover = newHover;
             if (currentHover != null) OnHoverEnter(currentHover);
@@ -91,8 +98,7 @@ public class HoverManager : MonoBehaviour
             currentHover.ClickFromRaycaster();
     }
 
-    private IsHoverable TryHitInteractable(Ray ray)
-    {
+    private IsHoverable TryHitInteractable(Ray ray) {
         // We raycast against "occluders" so the FIRST thing in front of the player is what counts.
         // That makes interaction feel correct (walls block objects behind them).
         // Make sure your occluderMask includes environment + interactables.
@@ -127,8 +133,9 @@ public class HoverManager : MonoBehaviour
 
     // }
 
-    private void OnHoverEnter(IsHoverable hov)
-    {
+    private void OnHoverEnter(IsHoverable hov) {
+        if (!hov.isInteractable) return;
+
         if (reticle) reticle.rectTransform.sizeDelta = hoverSize;
 
         if (PlayerPickupController.Instance != null && PlayerPickupController.Instance.isInspecting)
@@ -143,24 +150,20 @@ public class HoverManager : MonoBehaviour
 
         if (!hoverInfoText) return;
 
-        if (hov is HidingAnimator hidingSpot)
-        {
-            bool showHidingInfo = !hidingSpot.hasHided;
-            if (showHidingInfo)
+        if (hov is HidingAnimator hidingSpot) {
+            bool firstTimeHiding = !hidingSpot.hasHided;
+            if (firstTimeHiding)
                 hoverInfoText.text = HidingAnimator.isHiding ? "Get out" : "Hide";
             else
                 hoverInfoText.text = "";
         }
-        else
-        {
+        else {
             hoverInfoText.text = hov.ObjectHoverInfo;
         }
     }
 
-    private void OnHoverExit()
-    {
-        if (hoverInfoUI)
-        {
+    private void OnHoverExit() {
+        if (hoverInfoUI) {
             hoverInfoUI.SetActive(false);
             if (hoverInfoText) hoverInfoText.text = "";
         }

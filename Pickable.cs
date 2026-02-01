@@ -9,6 +9,8 @@ public class Pickable : IsHoverable {
 
     public static event EventHandler OnPicked;
 
+    public static event EventHandler OnTvRemoteEquipped;
+
     public event EventHandler OnMugSlide;
 
     [SerializeField] private Transform keyStart;
@@ -166,6 +168,9 @@ public class Pickable : IsHoverable {
         else if (equipableObject.objectName == "Flashlight") {
             FlashlightStatus.Instance.CanBeToggled(true);
             FlashlightStatus.Instance.ToggleFlashlight();
+        }
+        else if (equipableObject.objectName == "TV Remote") {
+            OnTvRemoteEquipped?.Invoke(this, EventArgs.Empty);
         }
 
         gameObject.SetActive(false);

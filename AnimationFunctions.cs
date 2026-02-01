@@ -28,6 +28,15 @@ public class AnimationFunctions : MonoBehaviour {
         StartCoroutine(SnapAndIdle());
         livingRoomLight.BreakLight();
         SoundManager.Instance.PlayLightbulbBreakSound2(Camera.main.transform.position, 0.8f);
+        StartCoroutine(WaitBeforeTVOn());
+    }
+
+    private IEnumerator WaitBeforeTVOn() {
+        yield return new WaitForSeconds(2f);
+        if (!ToggleTV.Instance.isTVon) {
+            ToggleTV.Instance.ToggleTVScreen();
+            girlAnim.SetTrigger("LivingRoomCorner");
+        }
     }
 
     public void EndGirlAnimation() {
