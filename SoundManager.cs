@@ -34,9 +34,12 @@ public class SoundManager : MonoBehaviour {
         BreakPlank.OnPlankHit += BreakPlank_OnPlankHit1;
         PlayerInventory.Instance.OnEquip += Inventory_OnEquip;
         PlateFallAction.onPlateStartFall += Plate_OnPLateStartFall;
+        GirlScreamAction.OnGirlScream += Girl_OnScream;
     }
 
-
+    private void Girl_OnScream(object sender, System.EventArgs e) {
+        PlaySound(audioClipRefsSO.demonicScream, player.position);
+    }
 
     private void Plate_OnPLateStartFall(object sender, System.EventArgs e) {
         PlaySound(audioClipRefsSO.risingViolin, player.position, volume: 0.5f);

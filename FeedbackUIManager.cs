@@ -42,7 +42,7 @@ public class FeedbackUIManager : MonoBehaviour {
         errorRoutine = StartCoroutine(StartFeedback());
     }
 
-    public void ShowCustomDelayedFeedback(string message, float delay) {
+    public void ShowCustomDelayedFeedback(string message, float delay = 4.5f) {
         errorText.text = message;
 
         if (errorRoutine != null) {

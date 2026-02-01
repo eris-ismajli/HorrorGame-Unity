@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GirlKitchenLightOff : MonoBehaviour {
@@ -7,6 +8,8 @@ public class GirlKitchenLightOff : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player")) {
             creepyGirlAnim.SetTrigger("TurnKitchenLightOff");
+            FirstPersonController.Instance.canRun = false;
+            FirstPersonController.Instance.speed = 0.3f;
             Destroy(gameObject);
         }
     }

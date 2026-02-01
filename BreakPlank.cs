@@ -119,7 +119,7 @@ public class BreakPlank : IsHoverable {
 
     protected override void HandleMouseDown() {
         if (!PlayerInventory.Instance.HasEquipableObject(axeEquipableObjectSO)) {
-            FeedbackUIManager.Instance.ShowFeedback("Nothing to break the planks with");
+            FeedbackUIManager.Instance.ShowFeedback("The nails are sunk too deep. Find an axe.");
             return;
         }
 

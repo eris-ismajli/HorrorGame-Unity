@@ -4,7 +4,6 @@ public class SlidingMugAction : MonoBehaviour {
 
     [SerializeField] private GameObject mug;
     [SerializeField] private StopMugSlide StopMugSlideTrigger;
-    [SerializeField] private Pickable crowbar;
 
     private Animator mugAnimator;
 
@@ -13,7 +12,7 @@ public class SlidingMugAction : MonoBehaviour {
     }
 
     private void Start() {
-        crowbar.OnMugSlide += Crowbar_OnMugSlide;
+        DelayedEventOnPickupManager.OnMugSlide += Crowbar_OnMugSlide;
         StopMugSlideTrigger.OnStopMugSlide += StopMugSlideTrigger_OnStopMugSlide;
     }
 
@@ -24,7 +23,7 @@ public class SlidingMugAction : MonoBehaviour {
 
     private void StopMugSlideTrigger_OnStopMugSlide(object sender, System.EventArgs e) {
         mugAnimator.SetTrigger("StopSliding");
-        crowbar.OnMugSlide -= Crowbar_OnMugSlide;
+        DelayedEventOnPickupManager.OnMugSlide -= Crowbar_OnMugSlide;
         Destroy(gameObject);
     }
 

@@ -44,6 +44,9 @@ public class GirlCrawl : MonoBehaviour {
             kitchenLight.BreakLight();
         }
 
+        FirstPersonController.Instance.canRun = false;
+        FirstPersonController.Instance.speed = 0.4f;
+
         //  PREP ANIM FULLY WHILE STILL INVISIBLE 
         // Jump instantly into the crawl state at t=0 (no transition)
         girlAnim.ResetTrigger(crawlStateName);

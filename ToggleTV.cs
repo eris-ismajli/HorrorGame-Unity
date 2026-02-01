@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -53,6 +54,18 @@ public class ToggleTV : IsHoverable {
             tvStaticNoise.Stop();
             tvStaticVideo.Stop();
             tvLight.SetActive(false);
+        }
+
+        if (AnimationFunctions.Instance.isGirlInCorner) {
+            StartCoroutine(WaitBeforeScreamJumpscare());
+        }
+    }
+
+    private IEnumerator WaitBeforeScreamJumpscare() {
+        yield return new WaitForSeconds(2f);
+
+        if (!GirlScreamAction.Instance.triggered) {
+            GirlScreamAction.Instance.GirlScreamJumpscare();
         }
     }
 

@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 
 public class AnimationFunctions : MonoBehaviour {
+
+    public static AnimationFunctions Instance { get; private set; }
+
     [SerializeField] private LightManager livingRoomLight;
     [SerializeField] private LightSwitchManager kitchenLightSwitch;
     [SerializeField] private LightManager hallLight;
@@ -13,16 +16,29 @@ public class AnimationFunctions : MonoBehaviour {
     [SerializeField] private float minDelay = 0.03f;
     [SerializeField] private float maxDelay = 0.12f;
 
+    [SerializeField] private EquipableObjectSO flashlightSO;
+
+    [SerializeField] private GameObject girlScreamTrigger;
+
     private bool canFlicker = true;
     private Coroutine flickerRoutine;
     private bool lightOn;
     public bool isFlickering = false;
 
-    private bool turnedKitchenLightOff = false;
-
     private Animator girlAnim;
 
-    private void Awake() => girlAnim = GetComponent<Animator>();
+    public bool isGirlInCorner = false;
+
+    private float playerSpeed;
+
+    private void Awake() {
+        Instance = this;
+        girlAnim = GetComponent<Animator>();
+    }
+
+    private void Start() {
+        playerSpeed = FirstPersonController.Instance.speed;
+    }
 
     public void EndCrawl() {
         StartCoroutine(SnapAndIdle());
@@ -35,8 +51,15 @@ public class AnimationFunctions : MonoBehaviour {
         yield return new WaitForSeconds(2f);
         if (!ToggleTV.Instance.isTVon) {
             ToggleTV.Instance.ToggleTVScreen();
-            girlAnim.SetTrigger("LivingRoomCorner");
+            if (!PlayerInventory.Instance.HasEquipableObject(flashlightSO)) {
+                girlAnim.SetTrigger("LivingRoomCorner");
+                girlScreamTrigger.SetActive(true);
+                isGirlInCorner = true;
+            }
         }
+        yield return new WaitForSeconds(0.5f);
+        FirstPersonController.Instance.canRun = true;
+        FirstPersonController.Instance.speed = playerSpeed;
     }
 
     public void EndGirlAnimation() {
@@ -45,7 +68,6 @@ public class AnimationFunctions : MonoBehaviour {
 
     public void TurnOffKitchenLight() {
         kitchenLightSwitch.ToggleLightSwitch();
-        turnedKitchenLightOff = true;
         bloodyFingerprints.SetActive(true);
     }
 
@@ -75,9 +97,7 @@ public class AnimationFunctions : MonoBehaviour {
         }
         hallLight.ToggleLight(false);
         entranceLight.ToggleLight(false);
-        if (!turnedKitchenLightOff) {
-            kitchenLightSwitch.ToggleLightSwitch();
-        }
+
     }
 
     public void TurnLightsBackOn() {

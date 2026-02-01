@@ -48,6 +48,7 @@ public class AudioClipRefsSO : ScriptableObject {
     [Header("====== Horror =======")]
     public AudioClip risingViolin;
     public AudioClip scaryViolins;
+    public AudioClip demonicScream;
     [Header("=====================")]
 
     public AudioClip whisper;

@@ -7,11 +7,13 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Pickable : IsHoverable {
 
-    public static event EventHandler OnPicked;
+    public static event EventHandler<OnPickedEventArgs> OnPicked;
+
+    public class OnPickedEventArgs : EventArgs {
+        public string objectPickedName;
+    }
 
     public static event EventHandler OnTvRemoteEquipped;
-
-    public event EventHandler OnMugSlide;
 
     [SerializeField] private Transform keyStart;
     [SerializeField] private EquipableObjectSO equipableObject;
@@ -19,6 +21,8 @@ public class Pickable : IsHoverable {
     [SerializeField] private TextMeshProUGUI objectInfoTextUI;
     [SerializeField] private string objectInfoText;
     [SerializeField] private bool isEquipable;
+
+    [SerializeField] private string objectPickedName;
 
     [SerializeField] private GameObject crawlTrigger;
 
@@ -57,6 +61,10 @@ public class Pickable : IsHoverable {
 
     private void Start() {
         PlayerInventory.Instance.OnEquip += Inventory_OnEquip;
+
+        if (equipableObject != null) {
+            objectPickedName = equipableObject.objectName;
+        }
     }
 
     private void Inventory_OnEquip(object sender, PlayerInventory.OnEquipEventArgs e) {
@@ -83,7 +91,9 @@ public class Pickable : IsHoverable {
             objectInfoUI.SetActive(true);
             objectInfoTextUI.text = objectInfoText;
 
-            OnPicked?.Invoke(this, EventArgs.Empty);
+            OnPicked?.Invoke(this, new OnPickedEventArgs {
+                objectPickedName = objectPickedName
+            });
 
             rb.isKinematic = true;
             rb.useGravity = true;
@@ -97,23 +107,12 @@ public class Pickable : IsHoverable {
                 col.enabled = false;
             }
 
-            StartCoroutine(WaitBeforeKitchenHallLightsOff());
         }
     }
 
     private IEnumerator PickupKeyWhenReady() {
         yield return new WaitUntil(() => !PlayerPickupController.Instance.IsBusy);
         PlayerPickupController.Instance.TryPick(padlockKey);
-    }
-
-    private IEnumerator WaitBeforeKitchenHallLightsOff() {
-        yield return new WaitForSeconds(0.7f);
-        if (equipableObject.objectName == "Storage Key") {
-            if (hallLightSwitch.IsSwitchOn() && kitchenLightSwitch.IsSwitchOn()) {
-                hallLightSwitch.ToggleLightSwitch(silentSwitch: true);
-                kitchenLightSwitch.ToggleLightSwitch(silentSwitch: true);
-            }
-        }
     }
 
     public void Take() {
@@ -159,18 +158,15 @@ public class Pickable : IsHoverable {
                 drawer.drawerHasObject = false;
             }
         }
-        else if (equipableObject.objectName == "Crowbar") {
-            if (hallLightSwitch != null && hallLightSwitch.IsSwitchOn()) {
-                hallLightSwitch.ToggleLightSwitch();
-                OnMugSlide?.Invoke(this, EventArgs.Empty);
-            }
-        }
         else if (equipableObject.objectName == "Flashlight") {
             FlashlightStatus.Instance.CanBeToggled(true);
             FlashlightStatus.Instance.ToggleFlashlight();
+            FeedbackUIManager.Instance.ShowCustomDelayedFeedback("'F' to toggle flashlight");
         }
         else if (equipableObject.objectName == "TV Remote") {
             OnTvRemoteEquipped?.Invoke(this, EventArgs.Empty);
+            FeedbackUIManager.Instance.ShowCustomDelayedFeedback("Click the TV to toggle it on and off", 3f);
+
         }
 
         gameObject.SetActive(false);

@@ -12,8 +12,8 @@ public class FirstPersonController : MonoBehaviour {
     public int knockCounter = 0;
 
     [Header("Movement")]
-    [SerializeField] private float speed = 1f;
-    [SerializeField] private bool canRun = true;
+    public float speed = 1f;
+    public bool canRun = true;
     [SerializeField] private float runSpeed = 2.5f;
     [SerializeField] private KeyCode runningKey = KeyCode.LeftShift;
     [SerializeField] private bool playerCanMove = true;

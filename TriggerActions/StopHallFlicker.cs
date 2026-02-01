@@ -5,7 +5,13 @@ public class StopHallFlicker : MonoBehaviour {
     [SerializeField] private AnimationFunctions girlAnimationFunctions;
     [SerializeField] private EquipableObjectSO flashlightEquipableSO;
 
+    private float playerSpeed;
+
     private bool triggered = false;
+
+    private void Start() {
+        playerSpeed = FirstPersonController.Instance.speed;
+    }
 
     private void OnTriggerEnter(Collider other) {
         if (triggered) return;
@@ -49,6 +55,9 @@ public class StopHallFlicker : MonoBehaviour {
             if (DistanceBasedLightFlicker.Instance != null) {
                 DistanceBasedLightFlicker.Instance.isGirlVisible = false;
             }
+
+            FirstPersonController.Instance.canRun = true;
+            FirstPersonController.Instance.speed = playerSpeed;
         }
 
         Destroy(gameObject);
